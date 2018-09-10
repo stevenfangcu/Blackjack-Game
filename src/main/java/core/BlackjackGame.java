@@ -7,20 +7,26 @@ import java.util.List;
 import javax.naming.InitialContext;
 
 public class BlackjackGame {
+	// the specific suites and values for the cards
 	public static final String[] suites = {"H", "S", "C", "D"};
-	public static final String[] cards = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+	public static final String[] values = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+	//state of the game, if it should be still going or has it finished
 	boolean gameStatus = true;
-	List<Card> initDeck = new ArrayList<Card>(); // this is for the initialized deck
+	// this is for the initialized deck
+	List<Card> initDeck = new ArrayList<Card>(); 
 	
-	public int play(String x) { // to start the game basically 
+	//the initialize method.
+	public int play(String x) { 
 		if(x == null) {	
+			// when we don't have a text file
 			return Init();
+		}else {
+			// when we do have a text file, split up the string by " " and get the specific characters to go with it
+			return 3;
 		}
-		return 1;
 	}
 
 	private int Init() {
-		// TODO Auto-generated method stub
 
 		//card counter for each player (if they go over 21)
 		int playerTotal = 0;
