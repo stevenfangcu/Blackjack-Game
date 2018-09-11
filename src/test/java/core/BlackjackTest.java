@@ -37,7 +37,7 @@ public class BlackjackTest extends TestCase{
 		// using game1 as a dummy for now.
 		assertEquals(4, result.play(contentString));
 	}
-	/*
+	
 	public void testGame2() {
 		fileName = "src/test/resources/a2.txt";
 		contentString = "";
@@ -52,6 +52,7 @@ public class BlackjackTest extends TestCase{
 		// using game1 as a dummy for now.
 		assertEquals(2, result.play(contentString));
 	}
+	/*
 	public void testGame3() {
 		BlackjackGame result = new BlackjackGame();
 		// using game1 as a dummy for now.
