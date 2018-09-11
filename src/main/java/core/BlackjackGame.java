@@ -16,7 +16,7 @@ public class BlackjackGame {
 	
 	//player turn
 	boolean playersTurn = true;
-	boolean playersInstantBlackjack = false;
+	boolean playerSplit = false;
 	//ace counter for each player
 	int playerAces = 0;
 	int dealerAces = 0;
@@ -71,8 +71,12 @@ public class BlackjackGame {
 						if(contentOfGame[i].equals("S")) {
 							//stops the players turn
 							playersTurn = false;
-						}else if(contentOfGame[i] == "H") { // didn't implement this yet
-							
+						}else if( (contentOfGame[i].equals("H")) && (contentOfGame[i].length() == 1)) {
+							System.out.print(i + " ");
+							i++;
+							String secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
+							hitResult(1, secondCharString);
+							System.out.println("Hit and i has been incremented by 1: " + i);
 						}
 					}
 				}else if(!playersTurn) { // dealers turn
@@ -95,13 +99,15 @@ public class BlackjackGame {
 		}
 		System.out.println("Player Total: " + playerTotal);
 		System.out.println("Dealer Total: " + dealerTotal);
-		return 1;
+		return getResults(dealerTotal, playerTotal);
 	}
 
 	private int getResults(int dealers, int players) {
 		if(dealers > players) {
+			System.out.println("Player has a higher hand, player wins");
 			return 2;
 		}else if(dealers < players) {
+			System.out.println("Dealer has a higher hand, player loses");
 			return 3;
 		}else {
 			return 10; // tie
