@@ -45,7 +45,7 @@ public class BlackjackGame {
 	private int finishedGame(String txtFile) {
 		//splitting the array by spaces like in the given example on the BJassignment.pdf
 		String[] contentOfGame = txtFile.split(" ");
-		int counter = 0;
+		
 		System.out.println(Arrays.toString(contentOfGame) + " content length: " + contentOfGame.length);
 		for(int i = 0; i < contentOfGame.length; i++) {
 			if(i < 2) {
@@ -53,6 +53,8 @@ public class BlackjackGame {
 					// the second char of the string in the array
 					String secondCharString = Character.toString(contentOfGame[i].charAt(1));  
 					hitResult(1, secondCharString);
+				}else if(contentOfGame[i].length() == 3){
+					hitResult(1,"10");
 				}
 			}else if(i > 1 && i < 4) {
 				// the second char of the string in the array
@@ -60,10 +62,10 @@ public class BlackjackGame {
 				hitResult(0, secondCharString);
 				if(dealerTotal == 21) {
 					System.out.println("Dealer automatically wins with blackjack");
+					showResults();
 					return 4;
 				}
 			}else{
-				
 				if(playersTurn) { // players turn to Hit/Stand
 					if(contentOfGame[i].length() == 1) {
 						if(contentOfGame[i].equals("S")) {
@@ -75,13 +77,15 @@ public class BlackjackGame {
 					}
 				}else if(!playersTurn) { // dealers turn
 					if(dealerTotal > 16) {
+						showResults();
 						return getResults(dealerTotal,playerTotal); // the dealer HAS to stand here
 					}else{
-						if(dealerTotal < 16) {
+						if(dealerTotal < 17) {
 							String secondCharString = Character.toString(contentOfGame[i].charAt(1));  
 							hitResult(0, secondCharString);
 							if(dealerTotal > 21) {
 								System.out.println("Dealer bust, Player wins");
+								showResults();
 								return 2;
 							}
 						}
@@ -105,17 +109,22 @@ public class BlackjackGame {
 	}
 
 	public int hitResult(int id, String content){
-
 		int counter = 0;
 		if(id == 0) { // id for dealer = 0;
+			System.out.println(content);
 			while(counter < values.length) {
 				if(content.equals("J") || content.equals("Q") || content.equals("K")) {
 					dealerTotal += 10;
 					break;
 				}else if(content.equals("A")){
 					dealerAces++;
-					dealerTotal += 11;
-					break;
+					if(dealerTotal+11 <= 21) {
+						dealerTotal += 11;
+						break;
+					}else if(dealerTotal+11 > 21) {
+						dealerTotal++;
+						break;
+					}
 				}else if(content.equals(values[counter])){
 					dealerTotal += counter+1;
 					break;
@@ -123,16 +132,29 @@ public class BlackjackGame {
 				counter++;
 			}
 		}else if(id == 1) {
+			System.out.println(content);
 			while(counter < values.length) {
 				if(content.equals("J") || content.equals("Q") || content.equals("K")) {
 					playerTotal += 10;
 					break;
 				}else if(content.equals("A")) {
 					playerAces++;
-					playerTotal += 11;
+					if(playerTotal+11 <= 21) {
+						playerTotal += 11;
+						break;
+					}else if(playerTotal+11 > 21) {
+						playerTotal++;
+						break;
+					}
 					break;
-				}else {
-					playerTotal += counter+1;
+				}else if(content.length() == 1){
+					if(content.equals(values[counter])){
+							playerTotal += counter+1;
+							break;
+					}
+				}else if(content.length() == 2) {
+					playerTotal += 10;
+					break;
 				}
 				counter++;
 			}
