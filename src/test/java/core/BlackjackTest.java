@@ -17,40 +17,55 @@ public class BlackjackTest extends TestCase{
 	4 for BJ win for the dealer
 	5 for Bust win for the dealer
 	6 for higher hand for the dealer
+	7 for error in the textfile
 	 */
 	String fileName = "";
+	String contentString = "";
 	public void testGame1() {
 		fileName = "src/test/resources/a1.txt";
 		
 		try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-
-			stream.forEach(System.out::println);
-
+			//getting the content of the textfile that is pushed through
+			String content = new String(Files.readAllBytes(Paths.get(fileName)));
+			contentString = content;
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println(contentString);
+		BlackjackGame result = new BlackjackGame();
+		// using game1 as a dummy for now.
+		assertEquals(4, result.play(contentString));
+	}
+	/*
+	public void testGame2() {
+		fileName = "src/test/resources/a2.txt";
+		contentString = "";
+		try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
+			String content = new String(Files.readAllBytes(Paths.get(fileName)));
+			contentString = content;
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		BlackjackGame result = new BlackjackGame();
 		// using game1 as a dummy for now.
-		assertEquals(1, result.play("game1"));
-	}
-	public void testGame2() {
-		BlackjackGame result = new BlackjackGame();
-		// using game1 as a dummy for now.
-		assertEquals(2, result.play("game2"));
+		assertEquals(2, result.play(contentString));
 	}
 	public void testGame3() {
 		BlackjackGame result = new BlackjackGame();
 		// using game1 as a dummy for now.
-		assertEquals(3, result.play("game3"));
+		assertEquals(3, result.play(""));
 	}
 	public void testGame4() {
 		BlackjackGame result = new BlackjackGame();
 		// using game1 as a dummy for now.
-		assertEquals(3, result.play("game4"));
+		assertEquals(3, result.play(""));
 	}
 	public void testGame5() {
 		BlackjackGame result = new BlackjackGame();
 		// using game1 as a dummy for now.
-		assertEquals(3, result.play("game5"));
+		assertEquals(3, result.play(""));
 	}
+	*/
 }
