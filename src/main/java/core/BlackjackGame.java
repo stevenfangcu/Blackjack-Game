@@ -16,6 +16,8 @@ public class BlackjackGame {
 	int playerSplitT = 0;
 	int dealerSplitT = 0;
 	
+	//a global counter for the card count in the arrayList
+	int globalCounter = 0;
 	//player turn
 	boolean playersTurn = true;
 	boolean playerSplit = false;
@@ -31,6 +33,11 @@ public class BlackjackGame {
 	//init the deck 
 	List<Card> initDeck = new ArrayList<Card>();
 	
+	//keeping the string value of the first character and comparing it to the second to see if user can split
+	String valueFirstPlayer = "";
+	String valueSecondPlayer = "";
+	String valueFirstDealer = "";
+	String valueSecondDealer = "";
 	
 	//state of the game, if it should be still going or has it finished
 	boolean gameStatus = true;
@@ -39,6 +46,13 @@ public class BlackjackGame {
 	//the initialize method.
 	public int play(String txtFile) {
 		initDeck = buildDeck(suites, values);
+		//this shuffles the deck might be reuseable?
+		Collections.shuffle(initDeck);
+		for(int i = 0; i < initDeck.size(); i++) {
+			System.out.print(initDeck.get(i).getValue() + initDeck.get(i).getSuit() + " ");
+		}
+		System.out.println();
+		System.out.println("Size of Deck: " + initDeck.size());
 		if(txtFile.equals("") || txtFile.equals(null)) {// we don't have a textfile
 			
 			return Init();
@@ -57,14 +71,24 @@ public class BlackjackGame {
 			if(i < 2) {
 				if(contentOfGame[i].length() == 2){
 					// the second char of the string in the array
-					String secondCharString = Character.toString(contentOfGame[i].charAt(1));  
+					String secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
+					if(i == 0) {
+						valueFirstPlayer = secondCharString;
+					}else {
+						valueSecondPlayer = secondCharString;
+					}
 					hitResult(1, secondCharString);
 				}else if(contentOfGame[i].length() == 3){
 					hitResult(1,"10");
 				}
 			}else if(i > 1 && i < 4) {
 				// the second char of the string in the array
-				String secondCharString = Character.toString(contentOfGame[i].charAt(1));  
+				String secondCharString = Character.toString(contentOfGame[i].charAt(1));
+				if(i == 2) {
+					valueFirstDealer = secondCharString;
+				}else{
+					valueSecondDealer = secondCharString;
+				}
 				hitResult(0, secondCharString);
 				if(dealerTotal == 21) {
 					System.out.println("Dealer automatically wins with blackjack");
@@ -74,15 +98,19 @@ public class BlackjackGame {
 			}else{
 				if(playersTurn) { // players turn to Hit/Stand
 					if(contentOfGame[i].length() == 1) {
-						if(contentOfGame[i].equals("S")) {
+						if(contentOfGame[i].equals("S")) { // stand
 							//stops the players turn
 							playersTurn = false;
-						}else if( (contentOfGame[i].equals("H")) && (contentOfGame[i].length() == 1)) {
+						}else if( (contentOfGame[i].equals("H")) && (contentOfGame[i].length() == 1)) { // hit
 							System.out.print(i + " ");
 							i++;
 							String secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
 							hitResult(1, secondCharString);
 							System.out.println("Hit and i has been incremented by 1: " + i);
+						}else if(contentOfGame[i].equals("D") && (contentOfGame[i].length() == 1)) { // split
+							if(valueFirstPlayer.equals(valueSecondPlayer)) {
+								splitHand(0);
+							}
 						}
 					}
 				}else if(!playersTurn) { // dealers turn
@@ -106,6 +134,23 @@ public class BlackjackGame {
 		System.out.println("Player Total: " + playerTotal);
 		System.out.println("Dealer Total: " + dealerTotal);
 		return getResults(dealerTotal, playerTotal);
+	}
+
+	private void splitHand(int i) {
+		int x = 0;
+		if(i == 0) {
+			x = (playerTotal / 2);
+			playerTotal = x;
+			playerSplit = true;
+			playerSplitT = x;
+			System.out.println("Player's hand has been split!");
+		}else if(i == 2) {
+			x = (dealerTotal / 2);
+			dealerTotal = (dealerTotal / 2);
+			dealerSplit = true;
+			dealerSplitT = x;
+			System.out.println("Dealer's hand has been split!");
+		}
 	}
 
 	private int getResults(int dealers, int players) {
@@ -176,10 +221,12 @@ public class BlackjackGame {
 	
 	private void showResults() {
 		System.out.println("Player Total: " + playerTotal);
+		if(playerSplit) System.out.println("Player Split Total: " + playerSplitT);
 		System.out.println("Dealer Total: " + dealerTotal);
+		if(dealerSplit) System.out.println("Dealer Split Total: " + dealerSplitT);
 	}
 
-	// game logic for when textfile isn't provided
+	// game logic for when textfile isn't provided not implemented.
 	private int Init() {
 		
 		return 2;
@@ -190,15 +237,19 @@ public class BlackjackGame {
 	*/
 	public static List<Card> buildDeck(String[] suites, String[] values){
 		List<Card> dummyDeck = new ArrayList<Card>();
+		int inputValue = 0;
 		for (int i = 0; i < suites.length; i++){ // for each suite 
 			for (int j = 0; j < values.length; j++){ // for each value 
-				Card k = new Card(values[j], suites[i]); // making a card with the values
+				if(j > 8){
+					inputValue = 10;
+				}else {
+					inputValue = j;
+				}
+				Card k = new Card(values[j], suites[i],inputValue); // making a card with the values
 				dummyDeck.add(k); // adding it into the dummy deck 
 			}
 		}
-		System.out.println();
 		return dummyDeck;
 	}
-	
 	
 }
