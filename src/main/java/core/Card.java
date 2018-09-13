@@ -1,13 +1,13 @@
 package core;
 
 public class Card {
-	private int value;
+	private String value;
 	private String suit;
-	public Card(String suit, int value) {
+	public Card(String suit, String value) {
 		this.value = value;
 		this.suit = suit;
 	}
-	public int getValue() {
+	public String getValue() {
 		return this.value;
 	}
 	public String getSuit() {

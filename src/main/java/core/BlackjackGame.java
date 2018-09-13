@@ -13,10 +13,13 @@ public class BlackjackGame {
 	//dealer wins automatically when they get blackjack starting hand
 	int playerTotal = 0;
 	int dealerTotal = 0;
+	int playerSplitT = 0;
+	int dealerSplitT = 0;
 	
 	//player turn
 	boolean playersTurn = true;
 	boolean playerSplit = false;
+	boolean dealerSplit = false;
 	//ace counter for each player
 	int playerAces = 0;
 	int dealerAces = 0;
@@ -25,14 +28,17 @@ public class BlackjackGame {
 	public static final String[] suites = {"H", "S", "C", "D"};
 	public static final String[] values = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
 	
+	//init the deck 
+	List<Card> initDeck = new ArrayList<Card>();
+	
+	
 	//state of the game, if it should be still going or has it finished
 	boolean gameStatus = true;
-	
-	// this is for the initialized deck
-	List<Card> initDeck = new ArrayList<Card>(); 
+	 
 	
 	//the initialize method.
-	public int play(String txtFile) { 
+	public int play(String txtFile) {
+		initDeck = buildDeck(suites, values);
 		if(txtFile.equals("") || txtFile.equals(null)) {// we don't have a textfile
 			
 			return Init();
@@ -178,5 +184,21 @@ public class BlackjackGame {
 		
 		return 2;
 	}
+	/*making the deck that is a list of cards and returning that to set to the global deck that we will be using
+	 * still have to somehow to randomize the list, will look for some specific ways through the array methods that 
+	 * are already implemented in java
+	*/
+	public static List<Card> buildDeck(String[] suites, String[] values){
+		List<Card> dummyDeck = new ArrayList<Card>();
+		for (int i = 0; i < suites.length; i++){ // for each suite 
+			for (int j = 0; j < values.length; j++){ // for each value 
+				Card k = new Card(values[j], suites[i]); // making a card with the values
+				dummyDeck.add(k); // adding it into the dummy deck 
+			}
+		}
+		System.out.println();
+		return dummyDeck;
+	}
+	
 	
 }
