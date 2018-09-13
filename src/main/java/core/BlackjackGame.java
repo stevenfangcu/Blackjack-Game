@@ -38,6 +38,7 @@ public class BlackjackGame {
 	int dealerAcesSplit = 0;
 	int playerAcesSplit = 0;
 	
+	
 	// the specific suites and values for the cards
 	public static final String[] suites = {"H", "S", "C", "D"};
 	public static final String[] values = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
@@ -83,7 +84,6 @@ public class BlackjackGame {
 				if(contentOfGame[i].length() == 2){
 					// the second char of the string in the array
 					String secondCharString = Character.toString(contentOfGame[i].charAt(1));
-					System.out.println(secondCharString);
 					if(i == 0) {
 						valueFirstPlayer = secondCharString;
 					}else {
@@ -122,13 +122,15 @@ public class BlackjackGame {
 							i++;
 							String secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
 							hitResult(1, secondCharString);
-							System.out.println("Hit: " + contentOfGame[i]);
+							System.out.println("Hit: " + contentOfGame[i] + " ");
 							if(playerTotal > 21 && !playerSplit) {
 								System.out.println("User loses by busting!");
+								showResults();
 								return 6;
 							}
 							if(playerSplit && playerSplitT > 21 && playerTotal > 21){
 								System.out.println("User loses by busting!");
+								showResults();
 								return 6;
 							}
 						}else if(contentOfGame[i].equals("D") && (contentOfGame[i].length() == 1)) { // split
@@ -139,25 +141,22 @@ public class BlackjackGame {
 						}
 					}
 				}else if(!playersTurn) { // dealers turn
+					
 					if(contentOfGame[i].equals("D")) {
 						dealerSplit = true;
 						splitHand(0);
-					}else if(dealerTotal > 16) {
+					}else if(dealerTotal > 16 && dealerTotal <= 21) {
 						showResults();
 						return getResults(); // the dealer HAS to stand here
 					}else{
-						if(dealerTotal < 17) {
+						if(dealerTotal <= 17) {
+							System.out.println(contentOfGame[i] + " ,");
 							String secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
 							hitResult(0, secondCharString);
-							if(dealerTotal > 21) {
-								if(dealerSplit) {
-									hitResult(0, secondCharString);
-								}else {
-									System.out.println("Dealer bust, Player wins");
-									showResults();
-									return 2;
-								}
-							}
+						}else if(dealerSplitT <= 17) {
+							System.out.println(contentOfGame[i] + " .");
+							String secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
+							hitResult(2, secondCharString);
 						}
 					}
 				}
@@ -168,12 +167,12 @@ public class BlackjackGame {
 	}
 
 	private void splitHand(int i) {
-		//int x = 0;
+		int x = 0;
 		if(i == 1) {
-			//x = (playerTotal / 2);
-			//playerTotal = x*2;
+			x = (playerTotal / 2);
+			playerTotal = x;
 			playerSplit = true;
-			playerSplitT = playerTotal;
+			playerSplitT = x;
 			System.out.println("Player's hand has been split!");
 		}else if(i == 0) {
 			dealerTotal = (dealerTotal / 2);
@@ -184,16 +183,38 @@ public class BlackjackGame {
 	}
 
 	private int getResults() {
-		if(playerSplitT > dealerSplitT && playerSplitT > dealerTotal) {
+		if(dealerTotal > 21 && dealerSplit == false){
+			System.out.println("User wins by dealer bust");
+			return 2;
+		}else if(dealerSplitT > 21 ) {
+			if(dealerTotal > 21) {
+				dealerTotal = 0;
+			}
+			dealerSplitT = 0;
+		}else if(playerTotal > 21 && playerSplit == false) {
+			System.out.println("User loses by busting");
+			return 5;
+		}else if(playerSplitT > 21) {
+			if(playerTotal > 21) {
+				playerTotal = 0;
+			}
+			playerSplitT = 0;
+		}else if(playerTotal > 21) {
+			playerTotal = 0;
+		}else if(dealerTotal > 21) {
+			dealerTotal = 0;
+		}
+		System.out.println("1. " + playerTotal + " 2. " + playerSplitT + " 3. " + dealerTotal + " 4. " + dealerSplitT);
+		if((playerSplitT > dealerSplitT) && (playerSplitT > dealerTotal)) {
 			System.out.println("User wins by having a bigger hand");
 			return 3;
-		}else if(playerTotal > dealerSplitT && playerTotal > dealerTotal) {
+		}else if((playerTotal > dealerSplitT) && (playerTotal > dealerTotal)) {
 			System.out.println("User wins by having a bigger hand");
 			return 3;
-		}else if(dealerSplitT > playerTotal && dealerSplitT > playerSplitT) {
+		}else if((dealerSplitT > playerTotal) && (dealerSplitT > playerSplitT)) {
 			System.out.println("User loses by having a lower hand");
 			return 6;
-		}else if(dealerSplitT > playerTotal && dealerSplitT > playerSplitT) {
+		}else if((dealerTotal > playerTotal) && (dealerTotal > playerSplitT)) {
 			System.out.println("User loses by having a lower hand");
 			return 6;
 		}else if(dealerTotal > playerTotal){
@@ -209,26 +230,33 @@ public class BlackjackGame {
 		}
 	}
 
+	
 	public int hitResult(int id, String content){
 		int counter = 0;
 		if(id == 0) { // id for dealer = 0;
-			System.out.println(content + " " + firstHandDealer);
 			while(counter < values.length) {
 				if(content.equals("J") || content.equals("Q") || content.equals("K")) {
-					if(firstHandDealer) {
+					if(firstHandDealer){
 						if((dealerTotal+10) < 21){
 							dealerTotal += 10;
 							break;
 						}else if((dealerTotal+10) > 21 && dealerAces > 0) {
 							dealerAces--;
+							dealerTotal += 10;
+							break;
+						}else {
+							dealerTotal += 10;
 							break;
 						}
 					}else {
-						if((dealerTotal+10) < 21) {
+						if((dealerSplitT+10) < 21) {
 							dealerSplitT += 10;
 							break;
-						}else if((dealerTotal+10) > 21 && dealerAces > 0) {
-							dealerAces--;
+						}else if((dealerSplitT+10) > 21 && dealerAcesSplit > 0) {
+							dealerAcesSplit--;
+							dealerSplitT -= 1;
+							break;
+						}else{
 							break;
 						}
 					}
@@ -238,10 +266,12 @@ public class BlackjackGame {
 						if(dealerTotal+11 <= 21) {
 							dealerTotal += 11;
 							break;
-						}else if(dealerTotal+11 > 21) {
+						}else if((dealerTotal+11 > 21)) {
 							dealerTotal++;
 							break;
 						}else if((dealerTotal+1 > 21) && dealerAces > 0) {
+							dealerAces--;
+							dealerTotal -= 9;
 							break;
 						}
 					}else{
@@ -262,15 +292,13 @@ public class BlackjackGame {
 						dealerSplitT += counter+1;
 					}
 				}
-				if(dealerSplit) {
-					firstHandDealer = (!firstHandDealer);
-				}
 				counter++;
 			}
 			if(dealerSplit) {
 				firstHandDealer = !firstHandDealer;
 			}
 		}else if(id == 1) {
+			System.out.println("1:" + playerSplitT + " ." + playerTotal);
 			while(counter < values.length) {
 				if(content.equals("J") || content.equals("Q") || content.equals("K")) {
 					if(firstHandPlayer){
@@ -281,8 +309,8 @@ public class BlackjackGame {
 						break;
 					}
 				}else if(content.equals("A")) {
-					playerAces++;
 					if(firstHandPlayer) {
+						playerAces++;
 						if(playerTotal+11 <= 21) {
 							playerTotal += 11;
 							break;
@@ -291,6 +319,7 @@ public class BlackjackGame {
 							break;
 						}
 					}else {
+						playerAcesSplit++;
 						if(playerSplitT+11 <= 21) {
 							playerSplitT += 11;
 							break;
@@ -326,7 +355,19 @@ public class BlackjackGame {
 			if(playerSplit) {
 				firstHandPlayer = !firstHandPlayer;
 			}
+		}else if(id == 2) {// for split dealer
+			while(counter < values.length) {
+				if(content.equals(values[counter])) {
+					if( (dealerSplitT + (counter+1)) > 21 && (dealerAcesSplit > 0)){
+						dealerSplitT -= 10;
+						dealerSplitT += (counter+1);
+						break;
+					}
+				}
+				counter++;
+			}
 		}
+		System.out.println("2: " + playerSplitT + " ." + playerTotal);
 		return 1;
 	}
 	

@@ -1,1 +1,5 @@
 SK HK CQ D9 D H H6 H C5 H D3 S H D5 S
+
+10 6 3 S
+10 5 5 S
+10 9 S
