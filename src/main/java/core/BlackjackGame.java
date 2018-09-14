@@ -95,13 +95,17 @@ public class BlackjackGame {
 				}
 			}else if(i > 1 && i < 4) {
 				// the second char of the string in the array
-				String secondCharString = Character.toString(contentOfGame[i].charAt(1));
-				if(i == 2) {
-					valueFirstDealer = secondCharString;
-				}else{
-					valueSecondDealer = secondCharString;
+				if(contentOfGame[i].length() == 2){
+					String secondCharString = Character.toString(contentOfGame[i].charAt(1));
+					if(i == 2) {
+						valueFirstDealer = secondCharString;
+					}else{
+						valueSecondDealer = secondCharString;
+					}
+					hitResult(0, secondCharString);
+				}else if(contentOfGame[i].length() == 3) {
+					hitResult(0, "10");
 				}
-				hitResult(0, secondCharString);
 				if(dealerTotal == 21) {
 					System.out.println("Dealer automatically wins with blackjack");
 					showResults();
@@ -115,8 +119,10 @@ public class BlackjackGame {
 							gameCounter++;
 							if(!playerSplit) {
 								playersTurn = false;
-							}else if(gameCounter == 3){ // if there is two stands and !playerSplit is true
+								System.out.println("Player's first hand stands. ");
+							}else if(gameCounter == 2){ // if there is two stands and !playerSplit is true
 								playersTurn = false;
+								System.out.println("Player's second hand stands. ");
 							}
 						}else if( (contentOfGame[i].equals("H")) && (contentOfGame[i].length() == 1)) { // hit
 							i++;
@@ -140,8 +146,7 @@ public class BlackjackGame {
 						}else {
 						}
 					}
-				}else if(!playersTurn) { // dealers turn
-					
+				}else if(!playersTurn) { // dealers turn		
 					if(contentOfGame[i].equals("D")) {
 						dealerSplit = true;
 						splitHand(0);
@@ -150,13 +155,21 @@ public class BlackjackGame {
 						return getResults(); // the dealer HAS to stand here
 					}else{
 						if(dealerTotal <= 17) {
-							System.out.println(contentOfGame[i] + " ,");
-							String secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
-							hitResult(0, secondCharString);
+							if(contentOfGame[i].length() == 3) {
+								hitResult(0, "10");
+							}else if(contentOfGame[i].length() == 2) {
+								System.out.println(contentOfGame[i] + " ,");
+								String secondCharString = Character.toString(contentOfGame[i].charAt(1));
+								hitResult(0, secondCharString);
+							}
 						}else if(dealerSplitT <= 17) {
-							System.out.println(contentOfGame[i] + " .");
-							String secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
-							hitResult(2, secondCharString);
+							if(contentOfGame[i].length() == 3) {
+								hitResult(0, "10");
+							}else {
+								System.out.println(contentOfGame[i] + " .");
+								String secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
+								hitResult(2, secondCharString);
+							}
 						}
 					}
 				}
@@ -167,18 +180,33 @@ public class BlackjackGame {
 	}
 
 	private void splitHand(int i) {
-		int x = 0;
 		if(i == 1) {
-			x = (playerTotal / 2);
-			playerTotal = x;
-			playerSplit = true;
-			playerSplitT = x;
-			System.out.println("Player's hand has been split!");
+			if(playerAces == 0) {
+				playerTotal = (playerTotal / 2);
+				playerSplit = true;
+				playerSplitT = playerTotal;
+				System.out.println("Player's hand has been split!");
+			}else{
+				playerTotal = 11;
+				playerAces = 1;
+				playerSplit = true;
+				playerSplitT = 11;
+				playerAcesSplit = 1;
+			}
 		}else if(i == 0) {
-			dealerTotal = (dealerTotal / 2);
-			dealerSplit = true;
-			dealerSplitT = dealerTotal;
-			System.out.println("Dealer's hand has been split!");
+			if(dealerAces == 0) {
+				dealerTotal = (dealerTotal / 2);
+				dealerSplit = true;
+				dealerSplitT = dealerTotal;
+				System.out.println("Dealer's hand has been split! ");
+			}else {
+				dealerTotal = 11;
+				dealerAces = 1;
+				dealerSplit = true;
+				dealerSplitT = 11;
+				dealerAcesSplit = 1;
+				System.out.println("Dealer's hand has been split! ");
+			}
 		}
 	}
 
@@ -242,7 +270,6 @@ public class BlackjackGame {
 							break;
 						}else if((dealerTotal+10) > 21 && dealerAces > 0) {
 							dealerAces--;
-							dealerTotal += 10;
 							break;
 						}else {
 							dealerTotal += 10;
@@ -254,9 +281,9 @@ public class BlackjackGame {
 							break;
 						}else if((dealerSplitT+10) > 21 && dealerAcesSplit > 0) {
 							dealerAcesSplit--;
-							dealerSplitT -= 1;
 							break;
 						}else{
+							dealerSplitT += 10;
 							break;
 						}
 					}
@@ -266,12 +293,16 @@ public class BlackjackGame {
 						if(dealerTotal+11 <= 21) {
 							dealerTotal += 11;
 							break;
-						}else if((dealerTotal+11 > 21)) {
+						}else if( ( (dealerTotal+1) > 21) && dealerAces > 1) {
+							dealerAces -= 2;
+							dealerTotal -= 9;
+							break;
+						}else if( ( (dealerTotal+11) > 21) && dealerAces > 0){
+							dealerAces--;
 							dealerTotal++;
 							break;
-						}else if((dealerTotal+1 > 21) && dealerAces > 0) {
-							dealerAces--;
-							dealerTotal -= 9;
+						}else{
+							dealerTotal++;
 							break;
 						}
 					}else{
@@ -279,17 +310,46 @@ public class BlackjackGame {
 						if(dealerSplitT+11 <= 21) {
 							dealerSplitT += 11;
 							break;
-						}else if(dealerSplitT+11 > 21) {
+						}else if( ( (dealerSplitT+11) > 21) && dealerAcesSplit > 1) {
+							dealerAcesSplit -= 2;
+							dealerSplitT -= 9;
+							break;
+						}else if(( (dealerSplitT+11) > 21) && dealerAcesSplit > 0){
+							dealerAcesSplit--;
+							dealerSplitT++;
+							break;
+						}else{
 							dealerSplitT++;
 							break;
 						}
 					}
 				}else if(content.equals(values[counter])){
 					if(firstHandDealer) {
-						dealerTotal += counter+1;
-						break;
+						if( (dealerTotal+(counter+1))  < 21) {
+							dealerTotal += counter+1;
+							break;
+						}else if( ( (dealerTotal+(counter+1) ) > 21) && dealerAces > 0){
+							dealerTotal -= 10;
+							dealerAces--;
+							dealerTotal += counter+1;
+							break;
+						}else {
+							dealerTotal += counter+1;
+							break;
+						}
 					}else {
-						dealerSplitT += counter+1;
+						if( (dealerSplitT+(counter+1) ) < 21) {
+							dealerSplitT += counter+1;
+							break;
+						}else if( ( (dealerSplitT+(counter+1) ) > 21) && dealerAcesSplit > 0){
+							dealerSplitT -= 10;
+							dealerAcesSplit--;
+							dealerSplitT += counter+1;
+							break;
+						}else {
+							dealerSplitT += counter+1;
+							break;
+						}
 					}
 				}
 				counter++;
@@ -298,15 +358,30 @@ public class BlackjackGame {
 				firstHandDealer = !firstHandDealer;
 			}
 		}else if(id == 1) {
-			System.out.println("1:" + playerSplitT + " ." + playerTotal);
 			while(counter < values.length) {
 				if(content.equals("J") || content.equals("Q") || content.equals("K")) {
 					if(firstHandPlayer){
-						playerTotal += 10;
-						break;
-					}else {
+						if((playerTotal+10) < 21) {
+							playerTotal += 10;
+							break;
+						}else if( ( (playerTotal+10) > 21)  && playerAces > 0){
+							playerAces--;
+							break;
+						}else {
+							playerTotal += 10;
+							break;
+						}
+					}else{ // finish this part for aces
+						if((playerSplitT+10) < 21){
 						playerSplitT += 10;
 						break;
+						}else if( ( (playerSplitT+10)>21) && playerAcesSplit > 0) {
+							playerAcesSplit--;
+							break;
+						}else {
+							playerSplitT += 10;
+							break;
+						}
 					}
 				}else if(content.equals("A")) {
 					if(firstHandPlayer) {
@@ -314,8 +389,16 @@ public class BlackjackGame {
 						if(playerTotal+11 <= 21) {
 							playerTotal += 11;
 							break;
-						}else if(playerTotal+11 > 21) {
+						}else if((playerTotal+1 > 21) && playerAces > 1){
+							playerAces -= 2;
+							playerTotal -= 9;
+							break;
+						}else if( ( (playerTotal+11) > 21) && playerAces > 0){
+							playerAces--;
 							playerTotal++;
+							break;
+						}else {
+							playerTotal += 11;
 							break;
 						}
 					}else {
@@ -323,31 +406,74 @@ public class BlackjackGame {
 						if(playerSplitT+11 <= 21) {
 							playerSplitT += 11;
 							break;
-						}else if(playerSplitT+11 > 21) {
+						}else if( ( (playerSplitT+1) > 21) && playerAcesSplit > 1) {
+							playerAcesSplit -= 2;
+							playerSplitT -= 9;
+							break;
+						}else if( ( (playerSplitT+11) > 21) && playerAcesSplit > 0) {
+							playerAcesSplit--;
 							playerSplitT++;
+						}else{
+							playerSplitT += 11;
 							break;
 						}
 					}
-					break;
-				}else if(content.length() == 1){
+					//SK HK CQ D9 D H H6 H C5 H D3 S H D5 S
+				}else if(content.length() == 1){ // this part for aces
 					if(firstHandPlayer) {
 						if(content.equals(values[counter])){
-								playerTotal += (counter+1);
-								break;
+								if( (playerTotal+(counter+1) ) < 21) {
+									playerTotal += (counter+1);
+									break;
+								}else if( ( (playerTotal+(counter+1) ) > 21) && playerAces > 0){
+									playerAces--;
+									playerTotal -= 10;
+									playerTotal += (counter+1);
+									break;
+								}else {
+									playerTotal += (counter+1);
+									break;
+								}
 						}
 					}else{
 						if(content.equals(values[counter])){
-							playerSplitT += (counter+1);
-							break;
+							if( (playerSplitT+(counter+1) ) < 21) {
+								playerSplitT += (counter+1);
+								break;
+							}else if( ( (playerSplitT+(counter+1) ) > 21) && playerAcesSplit > 0){
+								playerAcesSplit--;
+								playerSplitT -= 10;
+								playerSplitT += (counter+1);
+								break;
+							}else {
+								playerSplitT += (counter+1);
+								break;
+							}
 						}
 					}
-				}else if(content.length() == 2) {
+				}else if(content.length() == 2) { // this part for aces 
 					if(firstHandPlayer) {
-						playerTotal += 10;
-						break;
+						if((playerTotal+10) < 21) {
+							playerTotal += 10;
+							break;
+						}else if (((playerTotal+10) > 21 ) && playerAces > 0) {
+							playerAces--;
+							break;
+						}else {
+							playerTotal += 10;
+							break;
+						}
 					}else {
-						playerSplitT += 10;
-						break;
+						if((playerSplitT+10) < 21) {
+							playerSplitT += 10;
+							break;
+						}else if (((playerSplitT+10) > 21 ) && playerAcesSplit > 0) {
+							playerAcesSplit--;
+							break;
+						}else {
+							playerSplitT += 10;
+							break;
+						}
 					}
 				}
 				counter++;
@@ -367,7 +493,6 @@ public class BlackjackGame {
 				counter++;
 			}
 		}
-		System.out.println("2: " + playerSplitT + " ." + playerTotal);
 		return 1;
 	}
 	
