@@ -22,6 +22,7 @@ public class BlackjackGame {
 	int playerSplitT = 0;
 	int dealerSplitT = 0;
 	
+	
 	int gameCounter = 0;
 	//a global counter for the card count in the arrayList
 	int globalCounter = 0;
@@ -513,11 +514,31 @@ public class BlackjackGame {
 		}
 		System.out.println();
 	}
-	public String firstHands(){
+	public String firstHands(int id, int split, int counter){
 		String returnV = "";
-		Card playerCard1 = initDeck.remove(0);
-		returnV = playerCard1.getSuit() + playerCard1.getValue();
-		System.out.println(returnV);
+		Card cardHand = initDeck.remove(0);
+		if(cardHand.getValue().equals("10") || cardHand.getValue().equals("A") || cardHand.getValue().equals("K") || 
+		cardHand.getValue().equals("Q") || cardHand.getValue().equals("J")) {
+			if(cardHand.getValue().equals("A") && id == 1) {
+				playerAces++;
+			}else {
+				dealerAces++;
+			}
+			returnV = cardHand.getSuit() + cardHand.getValue();
+		}else {
+			returnV = cardHand.getSuit() + "0" + cardHand.getValue();
+		}
+		if(split == 1 && counter == 0) { // save first card
+			valueFirstPlayer = cardHand.getValue();
+		}
+		if(id == 1) {
+			playerTotal += cardHand.getCount();
+		}else {
+			dealerTotal += cardHand.getCount();
+		}
+		if(valueFirstPlayer.equals(cardHand.getValue()) && counter != 0) {
+			playerSplit = true;
+		}
 		return returnV;
 	}
 	/*making the deck that is a list of cards and returning that to set to the global deck that we will be using
@@ -539,6 +560,47 @@ public class BlackjackGame {
 			}
 		}
 		return dummyDeck;
+	}
+
+	public String getPlayTotal() {
+		// TODO Auto-generated method stub
+		return Integer.toString(playerTotal);
+	}
+
+	public String getDealTotal() {
+		// TODO Auto-generated method stub
+		return Integer.toString(dealerTotal);
+	}
+
+	public boolean getPlayerSplit() {
+		// TODO Auto-generated method stub
+		System.out.println(playerSplit);
+		return playerSplit;
+	}
+
+	public String hit() {
+		Card cardHand = initDeck.remove(0);
+		String xString = "";
+		String yString = "";
+		if(cardHand.getValue().equals("10") || cardHand.getValue().equals("A") || cardHand.getValue().equals("K") || 
+		cardHand.getValue().equals("Q") || cardHand.getValue().equals("J")) {
+			xString = cardHand.getSuit() + cardHand.getValue();
+		}else {
+			xString = cardHand.getSuit() + "0" + cardHand.getValue();
+			yString = cardHand.getSuit() + cardHand.getValue();
+		}
+		System.out.println(yString);
+		hitResult(1, cardHand.getValue());
+		if(	Integer.parseInt(getPlayTotal()) > 21) {
+			gameStatus = false;
+		}
+		return xString;
+	}
+
+	public boolean getGameState() {
+		// TODO Auto-generated method stub
+		System.out.println(gameStatus);
+		return gameStatus;
 	}
 	
 }
