@@ -67,7 +67,8 @@ public class BlackjackGame {
 		//System.out.println("Size of Deck: " + initDeck.size());
 		if(txtFile.equals("") || txtFile.equals(null)) {// we don't have a textfile
 			
-			return Init();
+			Init();
+			return 11;
 		}else { // when we do have a textfile
 			return finishedGame(txtFile);
 		}
@@ -504,9 +505,20 @@ public class BlackjackGame {
 	}
 
 	// game logic for when textfile isn't provided not implemented.
-	private int Init() {
-		
-		return 2;
+	public void Init() {
+		initDeck = buildDeck(suites, values);
+		Collections.shuffle(initDeck);
+		for(int i = 0; i < initDeck.size(); i++) {
+			System.out.print(initDeck.get(i).getSuit() + initDeck.get(i).getValue() + " ");
+		}
+		System.out.println();
+	}
+	public String firstHands(){
+		String returnV = "";
+		Card playerCard1 = initDeck.remove(0);
+		returnV = playerCard1.getSuit() + playerCard1.getValue();
+		System.out.println(returnV);
+		return returnV;
 	}
 	/*making the deck that is a list of cards and returning that to set to the global deck that we will be using
 	 * still have to somehow to randomize the list, will look for some specific ways through the array methods that 

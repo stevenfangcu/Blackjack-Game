@@ -21,7 +21,7 @@ public class BlackjackTest extends TestCase{
 	 */
 	String fileName = "";
 	String contentString = "";
-/*
+
 	public void testGame1() {
 		fileName = "src/test/resources/a1.txt";
 		
@@ -68,21 +68,6 @@ public class BlackjackTest extends TestCase{
 		assertEquals(3, result.play(contentString));
 	}
 	
-	public void testGame5() {
-		fileName = "src/test/resources/a5.txt";
-		contentString = "";
-		try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-			String content = new String(Files.readAllBytes(Paths.get(fileName)));
-			contentString = content;
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		BlackjackGame result = new BlackjackGame();
-		assertEquals(3, result.play(contentString));
-	}
-*/	
-	
 	public void testGame4() {
 		fileName = "src/test/resources/a4.txt";
 		contentString = "";
@@ -96,4 +81,18 @@ public class BlackjackTest extends TestCase{
 		BlackjackGame result = new BlackjackGame();
 		assertEquals(3, result.play(contentString));
 	}
+	public void testGame5() {
+		fileName = "src/test/resources/a5.txt";
+		contentString = "";
+		try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
+			String content = new String(Files.readAllBytes(Paths.get(fileName)));
+			contentString = content;
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		BlackjackGame result = new BlackjackGame();
+		assertEquals(3, result.play(contentString));
+	}
+	
 }
