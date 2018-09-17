@@ -95,4 +95,18 @@ public class BlackjackTest extends TestCase{
 		BlackjackGame result = new BlackjackGame();
 		assertEquals(3, result.play(contentString));
 	}
+	
+	public void testGame6() {
+		fileName = "src/test/resources/a11.txt";
+		contentString = "";
+		try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
+			String content = new String(Files.readAllBytes(Paths.get(fileName)));
+			contentString = content;
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		BlackjackGame result = new BlackjackGame();
+		assertEquals(2, result.play(contentString));
+	}
 }

@@ -85,6 +85,7 @@ public class BlackjackGame {
 		for(int i = 0; i < contentOfGame.length; i++) {
 			checkString = Character.toString(contentOfGame[i].charAt(0));
 			checkString2 = contentOfGame[i].substring(1);
+			//error checking
 			if(contentOfGame[i].equals("H") && i == contentOfGame.length){
 				System.out.println("missing input card");
 				break;
@@ -100,7 +101,7 @@ public class BlackjackGame {
 			}else{
 				cardsStrings[ArrayCounter++] = contentOfGame[i];
 			}
-			if(i < 2) {
+			if(i < 2) { // first two cards for user
 				if(contentOfGame[i].length() == 2){
 					// the second char of the string in the array
 					String secondCharString = Character.toString(contentOfGame[i].charAt(1));
@@ -113,7 +114,7 @@ public class BlackjackGame {
 				}else if(contentOfGame[i].length() == 3){
 					hitResult(1,"10");
 				}
-			}else if(i > 1 && i < 4) {
+			}else if(i > 1 && i < 4) { // first two cards for dealer
 				// the second char of the string in the array
 				if(contentOfGame[i].length() == 2){
 					String secondCharString = Character.toString(contentOfGame[i].charAt(1));
@@ -131,10 +132,14 @@ public class BlackjackGame {
 					showResults();
 					return 4;
 				}
+				if(Integer.parseInt(getPlayTotal())== 21 && dealerTotal != 21 && i == 3){
+					System.out.println("Player wins automatically");
+					return 2;
+				}
 			}else{
 				if(playersTurn){ // players turn to Hit/Stand
 					if(contentOfGame[i].length() == 1) {
-						if(contentOfGame[i].equals("S")) { // stand
+						if(contentOfGame[i].equals("S")) { // user stand
 							//stops the players turn
 							gameCounter++;
 							if(!playerSplit) {
@@ -144,7 +149,7 @@ public class BlackjackGame {
 								playersTurn = false;
 								System.out.println("Player's second hand stands. ");
 							}
-						}else if( (contentOfGame[i].equals("H")) && (contentOfGame[i].length() == 1)) { // hit
+						}else if( (contentOfGame[i].equals("H")) && (contentOfGame[i].length() == 1)) { // user hit
 							i++;
 							String secondCharString = "";
 							if(i == contentOfGame.length) {
@@ -237,6 +242,10 @@ public class BlackjackGame {
 	}
 
 	public int getResults() {
+		if(dealerTotal == 21) {
+			System.out.println("dealer wins with BJ");
+			return 4;
+		}
 		if(dealerTotal > 21 && dealerSplit == false){
 			System.out.println("User wins by dealer bust");
 			return 2;
@@ -535,6 +544,7 @@ public class BlackjackGame {
 			System.out.print(initDeck.get(i).getSuit() + initDeck.get(i).getValue() + " ");
 		}
 		System.out.println();
+		System.out.println(initDeck.size());
 	}
 	public String firstHands(int id, int split, int counter){
 		String returnV = "";
@@ -554,7 +564,6 @@ public class BlackjackGame {
 			valueFirstPlayer = cardHand.getValue();
 		}else if(split == 1 && counter == 1 && id == 1) {
 			valueSecondPlayer = cardHand.getValue();
-			System.out.println("asd" + valueFirstPlayer.equals(valueSecondPlayer));
 		}
 		if(id == 1) {
 			playerTotal += cardHand.getCount();
@@ -609,8 +618,6 @@ public class BlackjackGame {
 		return playerSplitT;
 	}
 	public boolean getPlayerSplit() {
-		// TODO Auto-generated method stub
-		System.out.println("asd1: " + valueFirstPlayer.equals(valueSecondPlayer));
 		return valueFirstPlayer.equals(valueSecondPlayer);
 	}
 

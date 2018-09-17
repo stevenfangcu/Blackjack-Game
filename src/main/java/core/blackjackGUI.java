@@ -59,6 +59,7 @@ public class blackjackGUI extends Application{
 	Label label3 = new Label("");
 	
 	public static void main(String[] args) {
+		/*
 		Scanner reader = new Scanner(System.in); 
 		System.out.println("Enter a file name or start: ");
 		String n = reader.next();
@@ -79,6 +80,7 @@ public class blackjackGUI extends Application{
 			result.play(contentString);
 			result.getResults();
 		}
+		*/
 		launch(args);
 	}
 	@Override
@@ -99,25 +101,6 @@ public class blackjackGUI extends Application{
 	}
 
 	private void setupCardsAnimation(Pane canvas) { // makes the first hand for both dealer and player
-		for(int i = 0; i < 2; i++) { // for the player
-			String fileString = "src/test/resources/cards/" + blackjack.firstHands(1,1,i) + ".bmp";
-			Image img = null;
-			try {
-				img = new Image(new FileInputStream(fileString));
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			ImageView imgView = new ImageView();
-			imgView.setImage(img);
-			imgView.relocate(5+(12*i), 85);
-			
-			label.setText("Player Total: " + blackjack.getPlayTotal());
-			label.setFont(Font.font("Serif", FontWeight.NORMAL, 20));
-			label.relocate(5, 10);
-			labelSplit.relocate(5, 40);		
-			canvas.getChildren().addAll(imgView);
-		}
 		for(int i = 0; i < 2; i++) {
 			String fileString = "";
 			if(i == 1) {
@@ -141,11 +124,35 @@ public class blackjackGUI extends Application{
 			label2.relocate(300, 10);
 			canvas.getChildren().addAll(imgView);
 		}
+		if(blackjack.getDealTotal().equals("21")) {
+			label3.setText("User loses by dealer blackjack");
+			showCard(canvas);
+		}else {
+		for(int i = 0; i < 2; i++) { // for the player
+			String fileString = "src/test/resources/cards/" + blackjack.firstHands(1,1,i) + ".bmp";
+			Image img = null;
+			try {
+				img = new Image(new FileInputStream(fileString));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			ImageView imgView = new ImageView();
+			imgView.setImage(img);
+			imgView.relocate(5+(12*i), 85);
+			
+			label.setText("Player Total: " + blackjack.getPlayTotal());
+			label.setFont(Font.font("Serif", FontWeight.NORMAL, 20));
+			label.relocate(5, 10);
+			labelSplit.relocate(5, 40);		
+			canvas.getChildren().addAll(imgView);
+		}
+		}
 		label3.setFont(Font.font("Serif", FontWeight.NORMAL, 20));
 		labelSplit.setFont(Font.font("Serif", FontWeight.NORMAL, 20));
 		label3.relocate(225, 210);
-		if(blackjack.getDealTotal().equals("21")) {
-			label3.setText("User loses by dealer blackjack");
+		if(blackjack.getPlayTotal().equals("21")) {
+			label3.setText("User wins by initial blackjack");
 		}
 		canvas.getChildren().addAll(label, label2, label3, labelSplit);
 	}
