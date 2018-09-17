@@ -30,6 +30,7 @@ public class BlackjackGame {
 	boolean playersTurn = true;
 	boolean playerSplit = false;
 	boolean dealerSplit = false;
+	boolean playerStand = false;
 	//boolean to keep track which splited hand should recieve the card
 	boolean firstHandDealer = true;
 	boolean firstHandPlayer = true;
@@ -212,7 +213,7 @@ public class BlackjackGame {
 		}
 	}
 
-	private int getResults() {
+	public int getResults() {
 		if(dealerTotal > 21 && dealerSplit == false){
 			System.out.println("User wins by dealer bust");
 			return 2;
@@ -420,7 +421,6 @@ public class BlackjackGame {
 							break;
 						}
 					}
-					//SK HK CQ D9 D H H6 H C5 H D3 S H D5 S
 				}else if(content.length() == 1){ // this part for aces
 					if(firstHandPlayer) {
 						if(content.equals(values[counter])){
@@ -528,12 +528,23 @@ public class BlackjackGame {
 		}else {
 			returnV = cardHand.getSuit() + "0" + cardHand.getValue();
 		}
-		if(split == 1 && counter == 0) { // save first card
+		if(split == 1 && counter == 0 && id == 1){ // save first card
 			valueFirstPlayer = cardHand.getValue();
+		}else if(split == 1 && counter == 1 && id == 1) {
+			valueSecondPlayer = cardHand.getValue();
+			System.out.println("asd" + valueFirstPlayer.equals(valueSecondPlayer));
 		}
 		if(id == 1) {
 			playerTotal += cardHand.getCount();
+			if(playerTotal > 21) {
+				playerTotal = 12;
+				playerAces--;
+			}
 		}else {
+			if(dealerTotal > 21) {
+				dealerTotal = 12;
+				dealerAces--;
+			}
 			dealerTotal += cardHand.getCount();
 		}
 		if(valueFirstPlayer.equals(cardHand.getValue()) && counter != 0) {
@@ -571,36 +582,89 @@ public class BlackjackGame {
 		// TODO Auto-generated method stub
 		return Integer.toString(dealerTotal);
 	}
-
+	public int getPlayerSplitTotal() {
+		// TODO Auto-generated method stub
+		return playerSplitT;
+	}
 	public boolean getPlayerSplit() {
 		// TODO Auto-generated method stub
-		System.out.println(playerSplit);
-		return playerSplit;
+		System.out.println("asd1: " + valueFirstPlayer.equals(valueSecondPlayer));
+		return valueFirstPlayer.equals(valueSecondPlayer);
 	}
 
-	public String hit() {
-		Card cardHand = initDeck.remove(0);
-		String xString = "";
-		String yString = "";
-		if(cardHand.getValue().equals("10") || cardHand.getValue().equals("A") || cardHand.getValue().equals("K") || 
-		cardHand.getValue().equals("Q") || cardHand.getValue().equals("J")) {
-			xString = cardHand.getSuit() + cardHand.getValue();
+	public String hit(int id) {
+		if(id == 1) {
+			Card cardHand = initDeck.remove(0);
+			String xString = "";
+			String yString = "";
+			if(cardHand.getValue().equals("10") || cardHand.getValue().equals("A") || cardHand.getValue().equals("K") || 
+			cardHand.getValue().equals("Q") || cardHand.getValue().equals("J")) {
+				xString = cardHand.getSuit() + cardHand.getValue();
+			}else {
+				xString = cardHand.getSuit() + "0" + cardHand.getValue();
+				yString = cardHand.getSuit() + cardHand.getValue();
+			}
+			System.out.println(yString);
+			if(gameCounter == 1 && playerStand == true) {
+				firstHandPlayer = false;
+			}else {
+				firstHandPlayer = true;
+			}
+			hitResult(1, cardHand.getValue());
+			if(	Integer.parseInt(getPlayTotal()) > 21 && !playerSplit && ( (playerSplitT==0) || (playerSplitT > 21) ) ){
+				gameStatus = false;
+			}
+			return xString;
 		}else {
-			xString = cardHand.getSuit() + "0" + cardHand.getValue();
-			yString = cardHand.getSuit() + cardHand.getValue();
+			Card cardHand = initDeck.remove(0);
+			String xString = "";
+			String yString = "";
+			if(cardHand.getValue().equals("10") || cardHand.getValue().equals("A") || cardHand.getValue().equals("K") || 
+			cardHand.getValue().equals("Q") || cardHand.getValue().equals("J")) {
+				xString = cardHand.getSuit() + cardHand.getValue();
+			}else {
+				xString = cardHand.getSuit() + "0" + cardHand.getValue();
+				yString = cardHand.getSuit() + cardHand.getValue();
+			}
+			System.out.println(yString);
+			hitResult(0, cardHand.getValue());
+			return xString;
 		}
-		System.out.println(yString);
-		hitResult(1, cardHand.getValue());
-		if(	Integer.parseInt(getPlayTotal()) > 21) {
-			gameStatus = false;
-		}
-		return xString;
 	}
 
 	public boolean getGameState() {
 		// TODO Auto-generated method stub
 		System.out.println(gameStatus);
 		return gameStatus;
+	}
+
+
+	public void splitHandGUI() {
+		if(valueFirstPlayer.equals(valueSecondPlayer)) {
+			splitHand(1);
+		}
+	}
+
+	public void stand() {
+		gameCounter++;
+		if(!playerSplit) {
+			playersTurn = false;
+			System.out.println("Player's first hand stands. ");
+		}else if(gameCounter == 2){ // if there is two stands and !playerSplit is true
+			playersTurn = false;
+			System.out.println("Player's second hand stands. ");
+		}else {
+			playerStand = true;
+		}
+	}
+
+	public boolean getPlayersTurn() {
+		return playersTurn;
+	}
+
+	public int getCounter() {
+		// TODO Auto-generated method stub
+		return gameCounter;
 	}
 	
 }
