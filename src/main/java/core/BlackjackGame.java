@@ -63,10 +63,6 @@ public class BlackjackGame {
 		initDeck = buildDeck(suites, values);
 		//this shuffles the deck might be reuseable?
 		Collections.shuffle(initDeck);
-		for(int i = 0; i < initDeck.size(); i++) {
-			//System.out.print(initDeck.get(i).getValue() + initDeck.get(i).getSuit() + " ");
-		}
-		//System.out.println("Size of Deck: " + initDeck.size());
 		if(txtFile.equals("") || txtFile.equals(null)) {// we don't have a textfile
 			
 			Init();
@@ -235,7 +231,6 @@ public class BlackjackGame {
 		}else if(dealerTotal > 21) {
 			dealerTotal = 0;
 		}
-		System.out.println("1. " + playerTotal + " 2. " + playerSplitT + " 3. " + dealerTotal + " 4. " + dealerSplitT);
 		if((playerSplitT > dealerSplitT) && (playerSplitT > dealerTotal)) {
 			System.out.println("User wins by having a bigger hand");
 			return 3;
@@ -605,7 +600,7 @@ public class BlackjackGame {
 				yString = cardHand.getSuit() + cardHand.getValue();
 			}
 			System.out.println(yString);
-			if(gameCounter == 1 && playerStand == true) {
+			if((gameCounter == 1 && playerStand == true) || playerTotal > 21){
 				firstHandPlayer = false;
 			}else {
 				firstHandPlayer = true;

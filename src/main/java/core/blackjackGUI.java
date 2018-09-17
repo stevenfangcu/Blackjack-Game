@@ -2,6 +2,7 @@ package core;
 
 
 import java.awt.Panel;
+import java.awt.Window;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -38,6 +39,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 public class blackjackGUI extends Application{
 	Button hitButton,SplitButton,Standbutton;
@@ -73,6 +79,7 @@ public class blackjackGUI extends Application{
 			result.play(contentString);
 			result.getResults();
 		}
+		launch(args);
 	}
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -176,10 +183,15 @@ public class blackjackGUI extends Application{
 
 			@Override
 			public void handle(ActionEvent event) {
-				if(blackjack.getGameState()){
+				if(blackjack.getPlayerSplitTotal() > 21){
+					label3.setText("Player busted with : " + blackjack.getPlayerSplitTotal());
+					hitButton.setDisable(true);
+				}else if(blackjack.getGameState() && Integer.parseInt(blackjack.getPlayTotal()) < 21){
 					System.out.println("Player Hit!");
 					String cardIdString = blackjack.hit(1);
 					makeNewImg(cardIdString, canvas);
+				}else if(blackjack.getGameState() && Integer.parseInt(blackjack.getPlayTotal()) < 21){
+					
 				}else if(blackjack.getCounter() == 1 && blackjack.getPlayerSplitTotal() > 21) {
 					hitButton.setDisable(true);
 					updatePlayTotal(canvas);
@@ -188,11 +200,14 @@ public class blackjackGUI extends Application{
 					hitButton.setDisable(true);
 					updatePlayTotal(canvas);
 					updatePlaySplitTotal(canvas);
+				}else if(blackjack.getPlayerSplitTotal() > 21 && Integer.parseInt(blackjack.getPlayTotal()) > 21) {
+					label.setText("Player busted with : " + blackjack.getPlayTotal());
+					label3.setText("User busts on both hands");
+					hitButton.setDisable(true);
 				}else{
 					hitButton.setDisable(true);
 					updatePlayTotal(canvas);
 					label.setText("Player busted with : " + blackjack.getPlayTotal());
-					
 				}
 			}
 			
