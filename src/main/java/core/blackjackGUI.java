@@ -45,9 +45,10 @@ public class blackjackGUI extends Application{
 	boolean split = false;
 	int Counter = 2;
 	int CounterD = 2;
+	String savedCard = "";
 	
 	Label label = new Label("Player Total: " + blackjack.getPlayTotal());
-	Label label2 = new Label("Player Total: " + blackjack.getDealTotal());
+	Label label2 = new Label("Dealer Total: " );
 	Label labelSplit = new Label(""); 
 	Label label3 = new Label("");
 	
@@ -111,7 +112,13 @@ public class blackjackGUI extends Application{
 			canvas.getChildren().addAll(imgView);
 		}
 		for(int i = 0; i < 2; i++) {
-			String fileString = "src/test/resources/cards/" + blackjack.firstHands(0,0,123) + ".bmp";
+			String fileString = "";
+			if(i == 1) {
+				fileString = "src/test/resources/cards/" + 1 + ".bmp";
+				savedCard = "src/test/resources/cards/" + blackjack.firstHands(0,0,123) + ".bmp";
+			}else {
+				fileString = "src/test/resources/cards/" + blackjack.firstHands(0,0,123) + ".bmp";
+			}
 			Image img = null;
 			try {
 				img = new Image(new FileInputStream(fileString));
@@ -123,7 +130,6 @@ public class blackjackGUI extends Application{
 			imgView.setImage(img);
 			imgView.relocate(310+(12*i), 85);
 			
-			label2.setText("Dealer Total: " + blackjack.getDealTotal());
 			label2.setFont(Font.font("Serif", FontWeight.NORMAL, 20));
 			label2.relocate(300, 10);
 			canvas.getChildren().addAll(imgView);
@@ -183,7 +189,6 @@ public class blackjackGUI extends Application{
 					updatePlayTotal(canvas);
 					updatePlaySplitTotal(canvas);
 				}else{
-					updatePlaySplitTotal(canvas);
 					hitButton.setDisable(true);
 					updatePlayTotal(canvas);
 					label.setText("Player busted with : " + blackjack.getPlayTotal());
@@ -198,6 +203,7 @@ public class blackjackGUI extends Application{
 			public void handle(ActionEvent event) {
 				if(!blackjack.getPlayersTurn()){
 					hitButton.setDisable(true);
+					showCard(canvas);
 					while(Integer.parseInt(blackjack.getDealTotal()) <= 16) {
 						String cardIdstring = blackjack.hit(0);
 						makeNewImg1(cardIdstring, canvas);
@@ -221,6 +227,7 @@ public class blackjackGUI extends Application{
 					blackjack.stand();
 				}
 			}
+
 		});
 	}
 	private void makeNewImg1(String cardIdstring, Pane canvas) {
@@ -243,7 +250,9 @@ public class blackjackGUI extends Application{
 		String fileString = "src/test/resources/cards/" + cardIdString + ".bmp";
 		
 		updatePlayTotal(canvas);
-		updatePlaySplitTotal(canvas);
+		if(blackjack.playerSplit){
+			updatePlaySplitTotal(canvas);
+		}
 		Image img = null;
 		try {
 			img = new Image(new FileInputStream(fileString));
@@ -265,5 +274,21 @@ public class blackjackGUI extends Application{
 	}
 	private void updateDealTotal() {
 		label2.setText("Dealer Total: " + blackjack.getDealTotal());
+	}
+	private void showCard(Pane canvas) {
+		Image img = null;
+		try {
+			img = new Image(new FileInputStream(savedCard));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ImageView imgView = new ImageView();
+		imgView.setImage(img);
+		imgView.relocate(310+(12), 85);
+		
+		label2.setFont(Font.font("Serif", FontWeight.NORMAL, 20));
+		label2.relocate(300, 10);
+		canvas.getChildren().addAll(imgView);
 	}
 }
