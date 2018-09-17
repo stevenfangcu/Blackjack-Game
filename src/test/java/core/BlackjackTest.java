@@ -21,7 +21,7 @@ public class BlackjackTest extends TestCase{
 	 */
 	String fileName = "";
 	String contentString = "";
-/*
+
 	public void testGame1() {
 		fileName = "src/test/resources/a1.txt";
 		
@@ -81,7 +81,7 @@ public class BlackjackTest extends TestCase{
 		BlackjackGame result = new BlackjackGame();
 		assertEquals(3, result.play(contentString));
 	}
-	*/
+	
 	public void testGame4() {
 		fileName = "src/test/resources/a4.txt";
 		contentString = "";

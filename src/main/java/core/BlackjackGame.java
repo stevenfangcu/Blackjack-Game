@@ -39,11 +39,14 @@ public class BlackjackGame {
 	int dealerAces = 0;
 	int dealerAcesSplit = 0;
 	int playerAcesSplit = 0;
+	int ArrayCounter = 0;
 	
 	
 	// the specific suites and values for the cards
 	public static final String[] suites = {"H", "S", "C", "D"};
 	public static final String[] values = {"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"};
+	
+	public String[] cardsStrings = new String[52];
 	
 	//init the deck 
 	List<Card> initDeck = new ArrayList<Card>();
@@ -76,9 +79,27 @@ public class BlackjackGame {
 	private int finishedGame(String txtFile) {
 		//splitting the array by spaces like in the given example on the BJassignment.pdf
 		String[] contentOfGame = txtFile.split(" ");
-		
+		String checkString = "";
+		String checkString2 = "";
 		System.out.println(Arrays.toString(contentOfGame) + " content length: " + contentOfGame.length);
 		for(int i = 0; i < contentOfGame.length; i++) {
+			checkString = Character.toString(contentOfGame[i].charAt(0));
+			checkString2 = contentOfGame[i].substring(1);
+			if(contentOfGame[i].equals("H") && i == contentOfGame.length){
+				System.out.println("missing input card");
+				break;
+			}else if(Arrays.asList(cardsStrings).contains(contentOfGame[i]) && contentOfGame[i].length() != 1 && contentOfGame[i].length() > 1) {
+				System.out.println("duplicate card");
+				break;
+			}else if(!Arrays.asList(suites).contains(checkString)) {
+				System.out.println("suit error");
+				break;
+			}else if(!Arrays.asList(values).contains(checkString2) && checkString2.length() > 0) {
+				System.out.println(contentOfGame[i]);
+				break;
+			}else{
+				cardsStrings[ArrayCounter++] = contentOfGame[i];
+			}
 			if(i < 2) {
 				if(contentOfGame[i].length() == 2){
 					// the second char of the string in the array
@@ -125,7 +146,13 @@ public class BlackjackGame {
 							}
 						}else if( (contentOfGame[i].equals("H")) && (contentOfGame[i].length() == 1)) { // hit
 							i++;
-							String secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
+							String secondCharString = "";
+							if(i == contentOfGame.length) {
+								System.out.println("null error");
+								break;
+							}else {
+								secondCharString = Character.toString(contentOfGame[i].charAt(1)); 
+							}
 							hitResult(1, secondCharString);
 							System.out.println("Hit: " + contentOfGame[i] + " ");
 							if(playerTotal > 21 && !playerSplit) {
