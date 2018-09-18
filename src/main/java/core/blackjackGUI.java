@@ -52,6 +52,7 @@ public class blackjackGUI extends Application{
 	int Counter = 2;
 	int CounterD = 2;
 	String savedCard = "";
+	int standCounter = 0;
 	
 	Label label = new Label("Player Total: " + blackjack.getPlayTotal());
 	Label label2 = new Label("Dealer Total: " );
@@ -61,10 +62,10 @@ public class blackjackGUI extends Application{
 	public static void main(String[] args) {
 		/*
 		Scanner reader = new Scanner(System.in); 
-		System.out.println("Enter a file name or start: ");
+		System.out.println("Enter a file name or c to start: ");
 		String n = reader.next();
 		reader.close();
-		if(n.equals("start")) {
+		if(n.equals("c")) {
 			launch(args);
 		}else {
 			String fileName = "src/test/resources/" + n;
@@ -79,6 +80,7 @@ public class blackjackGUI extends Application{
 			BlackjackGame result = new BlackjackGame();
 			result.play(contentString);
 			result.getResults();
+			System.exit(0);
 		}
 		*/
 		launch(args);
@@ -182,6 +184,7 @@ public class blackjackGUI extends Application{
 				updatePlayTotal(canvas);
 				updatePlaySplitTotal(canvas);
 				SplitButton.setDisable(true);
+				split = true;
 			}
 		});
 	}
@@ -190,6 +193,9 @@ public class blackjackGUI extends Application{
 
 			@Override
 			public void handle(ActionEvent event) {
+				if(split) {
+					updatePlaySplitTotal(canvas);
+				}
 				if(blackjack.getPlayerSplitTotal() > 21){
 					label3.setText("Player busted with : " + blackjack.getPlayerSplitTotal());
 					hitButton.setDisable(true);
@@ -223,29 +229,40 @@ public class blackjackGUI extends Application{
 
 			@Override
 			public void handle(ActionEvent event) {
-				if(!blackjack.getPlayersTurn()){
-					hitButton.setDisable(true);
-					showCard(canvas);
-					while(Integer.parseInt(blackjack.getDealTotal()) <= 16) {
-						String cardIdstring = blackjack.hit(0);
-						makeNewImg1(cardIdstring, canvas);
-						updateDealTotal();
-						
-					}
-					if(blackjack.getResults() == 1) {
-						label3.setText("User wins with blackjack");
-					}else if(blackjack.getResults() == 2) {
-						label3.setText("Users win by dealer bust");
-					}else if(blackjack.getResults() == 3){
-						label3.setText("User wins by having a higher hand");
-					}else if(blackjack.getResults() == 4) {
-						label3.setText("Blackjack win for dealer");
-					}else if((blackjack.getResults() == 6)) {
-						label3.setText("user loses by having a lower hand");
-					}else if(blackjack.getResults() == 10){
-						label3.setText("Tie!");
+				standCounter++;
+				
+				if(Integer.parseInt(blackjack.getPlayTotal()) > 21) {
+					System.out.println("User loses by busting");
+					label3.setText("User Busted!");
+				}else if( (!blackjack.getPlayersTurn())|| standCounter > 2){
+					if( (split && standCounter >= 2) || !split) {
+						showCard(canvas);
+						hitButton.setDisable(true);
+						while(Integer.parseInt(blackjack.getDealTotal()) <= 16) {
+							String cardIdstring = blackjack.hit(0);
+							makeNewImg1(cardIdstring, canvas);
+							updateDealTotal();
+							if(Integer.parseInt(blackjack.getDealTotal()) > 21) {
+								break;
+							}
+							
+						}
+						if(blackjack.getResults() == 1) {
+							label3.setText("User wins with blackjack");
+						}else if(blackjack.getResults() == 2) {
+							label3.setText("Users win by dealer bust");
+						}else if(blackjack.getResults() == 3){
+							label3.setText("User wins by having a higher hand");
+						}else if(blackjack.getResults() == 4) {
+							label3.setText("Blackjack win for dealer");
+						}else if((blackjack.getResults() == 6)) {
+							label3.setText("user loses by having a lower hand");
+						}else if(blackjack.getResults() == 10){
+							label3.setText("Tie!");
+						}
 					}
 				}else {
+					updateDealTotal();
 					blackjack.stand();
 				}
 			}
@@ -272,7 +289,7 @@ public class blackjackGUI extends Application{
 		String fileString = "src/test/resources/cards/" + cardIdString + ".bmp";
 		
 		updatePlayTotal(canvas);
-		if(blackjack.playerSplit){
+		if(this.split){
 			updatePlaySplitTotal(canvas);
 		}
 		Image img = null;

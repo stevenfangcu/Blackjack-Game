@@ -107,6 +107,6 @@ public class BlackjackTest extends TestCase{
 			e.printStackTrace();
 		}
 		BlackjackGame result = new BlackjackGame();
-		assertEquals(2, result.play(contentString));
+		assertEquals(6, result.play(contentString));
 	}
 }

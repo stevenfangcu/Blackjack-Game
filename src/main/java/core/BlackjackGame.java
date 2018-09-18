@@ -206,7 +206,7 @@ public class BlackjackGame {
 				}
 			}
 		}
-		showResults();
+		//showResults();
 		return getResults();
 	}
 
@@ -268,13 +268,13 @@ public class BlackjackGame {
 			dealerTotal = 0;
 		}
 		if((playerSplitT > dealerSplitT) && (playerSplitT > dealerTotal)) {
-			System.out.println("User wins by having a bigger hand");
+			System.out.println("User wins by having a bigger hand (Split)");
 			return 3;
 		}else if((playerTotal > dealerSplitT) && (playerTotal > dealerTotal)) {
 			System.out.println("User wins by having a bigger hand");
 			return 3;
 		}else if((dealerSplitT > playerTotal) && (dealerSplitT > playerSplitT)) {
-			System.out.println("User loses by having a lower hand");
+			System.out.println("User loses by having a lower hand (Split hand)");
 			return 6;
 		}else if((dealerTotal > playerTotal) && (dealerTotal > playerSplitT)) {
 			System.out.println("User loses by having a lower hand");
@@ -297,7 +297,7 @@ public class BlackjackGame {
 		int counter = 0;
 		if(id == 0) { // id for dealer = 0;
 			while(counter < values.length) {
-				if(content.equals("J") || content.equals("Q") || content.equals("K")) {
+				if(content.equals("J") || content.equals("Q") || content.equals("K") || content.equals("10")) {
 					if(firstHandDealer){
 						if((dealerTotal+10) < 21){
 							dealerTotal += 10;
@@ -305,7 +305,7 @@ public class BlackjackGame {
 						}else if((dealerTotal+10) > 21 && dealerAces > 0) {
 							dealerAces--;
 							break;
-						}else {
+						}else{
 							dealerTotal += 10;
 							break;
 						}
@@ -553,7 +553,7 @@ public class BlackjackGame {
 		cardHand.getValue().equals("Q") || cardHand.getValue().equals("J")) {
 			if(cardHand.getValue().equals("A") && id == 1) {
 				playerAces++;
-			}else {
+			}else if(cardHand.getValue().equals("A") && id == 0){
 				dealerAces++;
 			}
 			returnV = cardHand.getSuit() + cardHand.getValue();
@@ -643,21 +643,25 @@ public class BlackjackGame {
 			if(	Integer.parseInt(getPlayTotal()) > 21 && !playerSplit && ( (playerSplitT==0) || (playerSplitT > 21) ) ){
 				gameStatus = false;
 			}
+			System.out.println(yString);
 			return xString;
-		}else {
+		}else if(id == 0){
 			Card cardHand = initDeck.remove(0);
 			String xString = "";
 			String yString = "";
 			if(cardHand.getValue().equals("10") || cardHand.getValue().equals("A") || cardHand.getValue().equals("K") || 
 			cardHand.getValue().equals("Q") || cardHand.getValue().equals("J")) {
 				xString = cardHand.getSuit() + cardHand.getValue();
+				System.out.println(xString + " 4.");
 			}else {
 				xString = cardHand.getSuit() + "0" + cardHand.getValue();
 				yString = cardHand.getSuit() + cardHand.getValue();
 			}
-			System.out.println(yString);
 			hitResult(0, cardHand.getValue());
+			dealerSplit = false;
 			return xString;
+		}else {
+			return "";
 		}
 	}
 
